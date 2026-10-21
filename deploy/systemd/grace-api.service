@@ -1,0 +1,28 @@
+[Unit]
+Description=Grace Nyambura website API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=graceapp
+Group=graceapp
+WorkingDirectory=/var/www/grace/current
+EnvironmentFile=/etc/grace/grace-api.env
+ExecStart=/usr/bin/node server/src/server.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=false
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+[Install]
+WantedBy=multi-user.target
