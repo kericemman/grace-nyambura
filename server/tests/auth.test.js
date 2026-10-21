@@ -14,6 +14,7 @@ test('GET /api/v1/auth/session rejects requests without a session cookie', async
   const response = await request(createApp()).get('/api/v1/auth/session');
   assert.equal(response.status, 401);
   assert.equal(response.body.error.code, 'UNAUTHENTICATED');
+  assert.equal(response.headers['cache-control'], 'no-store');
 });
 
 test('POST /api/v1/auth/refresh requires a CSRF token', async () => {

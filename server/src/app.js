@@ -28,7 +28,10 @@ function createApp({ clientOrigin = 'http://localhost:5173' } = {}) {
     next();
   });
   app.use(cors({
-    origin: clientOrigin,
+    origin(origin, callback) {
+      if (!origin || origin === clientOrigin) return callback(null, true);
+      return callback(null, false);
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'X-CSRF-Token'],
