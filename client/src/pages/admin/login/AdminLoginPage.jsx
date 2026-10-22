@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { apiRequest } from '../../../lib/api';
+import { Seo } from '../../../components/seo/Seo';
 
 const loginSchema = z.object({
   email: z.string().trim().min(1, 'Enter your email address.').email('Enter a valid email address.'),
@@ -40,6 +41,7 @@ export function AdminLoginPage() {
 
   return (
     <main className="grid min-h-screen bg-ivory lg:grid-cols-[0.92fr_1.08fr]">
+      <Seo canonicalPath="/admin/login" description="Private administrator sign in." noIndex title="Admin sign in" />
       <section className="relative hidden overflow-hidden bg-primary p-12 text-white lg:flex lg:flex-col lg:justify-between xl:p-16">
         <div className="absolute top-0 right-0 h-full w-2/5 bg-champagne/[0.08]" aria-hidden="true" />
         <div className="absolute -right-40 -bottom-40 aspect-square w-[34rem] rounded-full border border-champagne/20" aria-hidden="true" />

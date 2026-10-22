@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useParams } from 'react-router-dom';
 import { z } from 'zod';
 import { apiRequest } from '../../lib/api';
+import { Seo } from '../../components/seo/Seo';
 
 const schema = z.object({
   clientName: z.string().min(2, 'Enter your name.'),
@@ -114,6 +115,7 @@ function SubmissionForm({ token, details }) {
 
   return (
     <main className="min-h-screen bg-ivory px-5 py-12 sm:px-8">
+      <Seo canonicalPath="/testimonial" description="Private testimonial submission form." noIndex title="Testimonial request" />
       <div className="mx-auto max-w-2xl">
         <div className="text-center">
           <Link className="font-display text-2xl font-semibold text-primary" to="/">

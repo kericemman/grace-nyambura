@@ -5,6 +5,7 @@ export { ServiceSection } from './ServiceSection';
 export { WhyGraceSection } from './WhyGraceSection';
 export { CredentialsSection } from './CredentialsSection';
 export { ClientWorkSection } from './ClientWorkSection';
+export { ClientStoriesSection } from './ClientStoriesSection';
 export { TestimonialsSection } from './TestimonialsSection';
 export { InsightsSection } from './InsightsSection';
 export { FinalCtaSection } from './FinalCtaSection';

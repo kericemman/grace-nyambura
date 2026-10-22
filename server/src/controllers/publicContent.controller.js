@@ -1,6 +1,10 @@
 const { Article } = require('../models/Article');
 const { CaseStudy } = require('../models/CaseStudy');
 
+const xmlEscape = (value) => String(value).replace(/[<>&'\"]/g, (character) => ({
+  '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;',
+})[character]);
+
 function pagination(request) {
   const page = Math.max(Number(request.query.page) || 1, 1);
   const limit = Math.min(Math.max(Number(request.query.limit) || 9, 1), 24);
@@ -40,11 +44,14 @@ async function caseStudyList(request, response, next) {
     const { page, limit } = pagination(request);
     const filter = { status: 'published', publicationApproved: true };
     if (request.query.industry) filter.industry = request.query.industry;
+    const sort = request.query.sort === 'latest'
+      ? { createdAt: -1 }
+      : { featured: -1, createdAt: -1 };
 
     const [items, total, industries] = await Promise.all([
       CaseStudy.find(filter)
         .select('-challenge -objectives -approach -contribution -results -testimonial')
-        .sort({ featured: -1, createdAt: -1 })
+        .sort(sort)
         .skip((page - 1) * limit)
         .limit(limit),
       CaseStudy.countDocuments(filter),
@@ -75,4 +82,32 @@ async function caseStudyBySlug(request, response, next) {
   } catch (error) { return next(error); }
 }
 
-module.exports = { articleBySlug, articleList, caseStudyBySlug, caseStudyList };
+async function sitemap(_request, response, next) {
+  try {
+    const siteUrl = (process.env.PUBLIC_SITE_URL || process.env.CLIENT_ORIGIN || 'https://gracenyambura.com').replace(/\/$/, '');
+    const [articles, caseStudies] = await Promise.all([
+      Article.find({ status: 'published' }).select('slug updatedAt publishedAt').lean(),
+      CaseStudy.find({ status: 'published', publicationApproved: true }).select('slug updatedAt').lean(),
+    ]);
+    const staticPages = [
+      ['', '1.0'], ['/about', '0.8'], ['/insights', '0.9'], ['/client-stories', '0.8'],
+      ['/linkedin-partnership', '0.9'], ['/contact', '0.7'], ['/privacy-policy', '0.3'], ['/terms', '0.3'],
+    ];
+    const urls = [
+      ...staticPages.map(([path, priority]) => ({ loc: `${siteUrl}${path || '/'}`, priority })),
+      ...articles.map((article) => ({ loc: `${siteUrl}/insights/${article.slug}`, lastmod: article.updatedAt || article.publishedAt, priority: '0.8' })),
+      ...caseStudies.map((study) => ({ loc: `${siteUrl}/client-stories/${study.slug}`, lastmod: study.updatedAt, priority: '0.7' })),
+    ];
+    const body = urls.map(({ loc, lastmod, priority }) => [
+      '  <url>', `    <loc>${xmlEscape(loc)}</loc>`,
+      lastmod ? `    <lastmod>${new Date(lastmod).toISOString()}</lastmod>` : '',
+      '    <changefreq>weekly</changefreq>', `    <priority>${priority}</priority>`, '  </url>',
+    ].filter(Boolean).join('\n')).join('\n');
+
+    response.set('Content-Type', 'application/xml; charset=utf-8');
+    response.set('Cache-Control', 'public, max-age=3600');
+    return response.send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>`);
+  } catch (error) { return next(error); }
+}
+
+module.exports = { articleBySlug, articleList, caseStudyBySlug, caseStudyList, sitemap };

@@ -6,12 +6,14 @@ const {
   articleList,
   caseStudyBySlug,
   caseStudyList,
+  sitemap,
 } = require('../controllers/publicContent.controller');
 const testimonials = require('../controllers/testimonial.controller');
 const { getPublicSettings } = require('../controllers/settings.controller');
 const enquiries = require('../controllers/enquiry.controller');
 const partnershipApplications = require('../controllers/partnershipApplication.controller');
 const subscribers = require('../controllers/subscriber.controller');
+const seo = require('../controllers/seo.controller');
 
 const publicContentRouter = express.Router();
 const submissionLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 12, standardHeaders: 'draft-8', legacyHeaders: false });
@@ -36,6 +38,9 @@ publicContentRouter.get('/articles', articleList);
 publicContentRouter.get('/articles/:slug', articleBySlug);
 publicContentRouter.get('/case-studies', caseStudyList);
 publicContentRouter.get('/case-studies/:slug', caseStudyBySlug);
+publicContentRouter.get('/sitemap.xml', sitemap);
+publicContentRouter.get('/seo/articles/:slug', seo.article);
+publicContentRouter.get('/seo/case-studies/:slug', seo.caseStudy);
 publicContentRouter.get('/testimonials', testimonials.published);
 publicContentRouter.get('/testimonial-requests/:token', submissionLimiter, testimonials.requestDetails);
 publicContentRouter.post(

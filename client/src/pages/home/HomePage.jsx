@@ -1,5 +1,6 @@
 import {
   ClientWorkSection,
+  ClientStoriesSection,
   CredentialsSection,
 
   HeroSection,
@@ -17,12 +18,14 @@ export function HomePage() {
     <>
       <HeroSection />
       <Stats/>
+      <ClientStoriesSection />
       <ProblemSection />
       <SolutionSection />
       <ServiceSection />
       <WhyGraceSection />
       <CredentialsSection />
       <ClientWorkSection />
+      
       <TestimonialsSection />
       <InsightsSection />
       {/* <FinalCtaSection /> */}

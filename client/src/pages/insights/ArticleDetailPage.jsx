@@ -12,6 +12,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { PublicRichContent } from '../../components/ui/PublicRichContent';
 import { apiRequest } from '../../lib/api';
+import { Seo, SITE_URL } from '../../components/seo/Seo';
 
 // Generate a table of contents from article HTML
 function prepareArticleContent(html = '') {
@@ -191,6 +192,24 @@ export function ArticleDetailPage() {
 
   return (
     <article className="min-h-screen bg-white">
+      <Seo
+        canonicalPath={article.canonicalUrl || `/insights/${article.slug}`}
+        description={article.seoDescription || article.excerpt}
+        image={article.coverImage || undefined}
+        publishedTime={article.publishedAt || article.createdAt}
+        title={article.seoTitle || article.title}
+        type="article"
+        structuredData={{
+          '@context': 'https://schema.org', '@type': 'Article', headline: article.title,
+          description: article.seoDescription || article.excerpt,
+          image: article.coverImage || undefined,
+          datePublished: article.publishedAt || article.createdAt,
+          dateModified: article.updatedAt,
+          mainEntityOfPage: `${SITE_URL}/insights/${article.slug}`,
+          author: { '@type': 'Person', name: article.author || 'Grace Nyambura', url: `${SITE_URL}/about` },
+          publisher: { '@type': 'Person', name: 'Grace Nyambura', url: SITE_URL },
+        }}
+      />
 
       {/* =====================================
           HERO SECTION

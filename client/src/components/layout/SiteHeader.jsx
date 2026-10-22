@@ -55,8 +55,9 @@ export function SiteHeader({ onSubscribe }) {
             type="button"
             onClick={onSubscribe}
           >
-            Subscribe
+            Join my community
           </button>
+          
           <ButtonLink to="/contact" size="compact">
             {settings.homepageCta}
           </ButtonLink>
@@ -84,7 +85,7 @@ export function SiteHeader({ onSubscribe }) {
                 onSubscribe();
               }}
             >
-              Subscribe
+             Join my community
             </button>
             <ButtonLink className="mt-5 w-full" to="/contact">
               {settings.homepageCta}

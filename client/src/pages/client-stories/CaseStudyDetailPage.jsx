@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { PublicRichContent } from '../../components/ui/PublicRichContent';
 import { apiRequest } from '../../lib/api';
 import { useEffect } from 'react';
+import { Seo, SITE_URL } from '../../components/seo/Seo';
 
 export function CaseStudyDetailPage() {
   useEffect(() => {
@@ -18,6 +19,21 @@ export function CaseStudyDetailPage() {
 
   return (
     <article className="bg-white">
+      <Seo
+        canonicalPath={`/client-stories/${story.slug}`}
+        description={story.seoDescription || story.summary}
+        image={story.coverImage || story.clientLogo || undefined}
+        title={story.seoTitle || story.projectTitle}
+        type="article"
+        structuredData={{
+          '@context': 'https://schema.org', '@type': 'Article', headline: story.projectTitle,
+          description: story.seoDescription || story.summary,
+          image: story.coverImage || story.clientLogo || undefined,
+          datePublished: story.createdAt, dateModified: story.updatedAt,
+          mainEntityOfPage: `${SITE_URL}/client-stories/${story.slug}`,
+          author: { '@type': 'Person', name: 'Grace Nyambura', url: `${SITE_URL}/about` },
+        }}
+      />
       <header className="bg-primary py-16 text-white md:py-24">
         <div className="mx-auto w-[min(100%-2rem,64rem)]">
           <Link className="inline-flex items-center gap-2 text-sm font-semibold text-white/60 hover:text-white" to="/client-stories"><ArrowLeft size={16} /> Client stories</Link>

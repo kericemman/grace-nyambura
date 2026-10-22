@@ -45,6 +45,14 @@ const caseSchema = z.object({
 
 const articleDefaults = { title: '', slug: '', excerpt: '', content: '<p></p>', coverImage: '', category: '', tagsText: '', author: 'Grace Nyambura', authorImage: '', status: 'draft', featured: false, seoTitle: '', seoDescription: '', canonicalUrl: '' };
 const caseDefaults = { clientName: '', company: '', industry: '', projectTitle: '', slug: '', summary: '', challenge: '<p></p>', objectives: '', approach: '<p></p>', contribution: '', results: '', testimonial: '', metricsText: '', evidenceLinksText: '', galleryText: '', clientLogo: '', coverImage: '', publicationApproved: false, status: 'draft', featured: false, seoTitle: '', seoDescription: '' };
+const articleCategories = [
+  'LinkedIn & Founder Visibility',
+  'Personal Branding',
+  'Content Strategy & Storytelling',
+  'Thought Leadership',
+  'Leadership Communication',
+  'Business Development',
+];
 
 export function ContentEditorPage({ type }) {
   const isArticle = type === 'articles';
@@ -141,6 +149,8 @@ export function ContentEditorPage({ type }) {
 }
 
 function ArticleFields({ form }) {
+  const currentCategory = useWatch({ control: form.control, name: 'category' });
+
   function generateSlug() {
     const value = form.getValues('title');
     const slug = value
@@ -165,7 +175,26 @@ function ArticleFields({ form }) {
         hint="Required: 10–500 characters."
       />
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Category" name="category" form={form} />
+        <label className="text-sm font-semibold text-primary">
+          Category
+          <select
+            className={`mt-2 min-h-11 w-full border bg-white px-3 font-normal outline-none focus:border-emerald ${form.formState.errors.category ? 'border-red-600' : 'border-border'}`}
+            {...form.register('category')}
+          >
+            <option value="">Select a category</option>
+            {currentCategory && !articleCategories.includes(currentCategory) && (
+              <option value={currentCategory}>{currentCategory} (current category)</option>
+            )}
+            {articleCategories.map((category) => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+          {form.formState.errors.category && (
+            <span className="mt-2 block text-sm font-normal text-red-700">
+              {form.formState.errors.category.message}
+            </span>
+          )}
+        </label>
         <Field label="Author" name="author" form={form} />
       </div>
       <ImageUpload

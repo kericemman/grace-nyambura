@@ -4,7 +4,7 @@ import Youtube from '@tiptap/extension-youtube';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Bold, Heading2, ImagePlus, Italic, Link as LinkIcon, List, ListOrdered, LoaderCircle, Quote, Youtube as YoutubeIcon } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { apiRequest } from '../../../lib/api';
 
 const tools = [
@@ -35,6 +35,11 @@ export function RichTextEditor({ label, value, onChange, error, category = 'arti
     },
     onUpdate: ({ editor: currentEditor }) => onChange(currentEditor.getHTML()),
   });
+
+  useEffect(() => {
+    if (!editor || editor.getHTML() === value) return;
+    editor.commands.setContent(value || '<p></p>', { emitUpdate: false });
+  }, [editor, value]);
 
   function setLink() {
     const previous = editor.getAttributes('link').href;

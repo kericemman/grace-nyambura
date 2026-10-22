@@ -5,7 +5,7 @@ This project is prepared for this production layout:
 - Public React site: `https://gracenyambura.com`
 - Optional public alias: `https://www.gracenyambura.com`
 - Express API: `https://app.gracenyambura.com`
-- API process: `127.0.0.1:5003`, reachable only through Nginx
+- API process: `127.0.0.1:5016`, reachable only through Nginx
 - Database: MongoDB Atlas
 - Media: Cloudinary
 - Transactional email: Resend
@@ -85,7 +85,7 @@ sudo systemctl enable --now fail2ban
 sudo systemctl enable --now unattended-upgrades
 ```
 
-In Hostinger's managed VPS firewall, allow inbound TCP ports `22`, `80`, and `443`. Do not expose port `5003` or MongoDB ports.
+In Hostinger's managed VPS firewall, allow inbound TCP ports `22`, `80`, and `443`. Do not expose port `5016` or MongoDB ports.
 
 ## 5. Install Node.js 22
 
@@ -168,8 +168,9 @@ Required production values include MongoDB, the three random secrets, Cloudinary
 ```env
 NODE_ENV=production
 HOST=127.0.0.1
-PORT=5003
+PORT=5016
 CLIENT_ORIGIN=https://gracenyambura.com
+PUBLIC_SITE_URL=https://gracenyambura.com
 COOKIE_DOMAIN=.gracenyambura.com
 ```
 
@@ -205,11 +206,11 @@ sudo journalctl -u grace-api -n 100 --no-pager
 Confirm the process listens only on loopback:
 
 ```bash
-sudo ss -lntp | grep 5003
-curl http://127.0.0.1:5003/api/v1/health
+sudo ss -lntp | grep 5016
+curl http://127.0.0.1:5016/api/v1/health
 ```
 
-The listening address must be `127.0.0.1:5003`, not `0.0.0.0:5003`.
+The listening address must be `127.0.0.1:5016`, not `0.0.0.0:5016`.
 
 ## 11. Install Nginx
 
@@ -299,6 +300,17 @@ Then verify in a browser:
 7. The unsubscribe link opens the confirmation page and changes the subscriber status.
 8. Uploaded images render from Cloudinary.
 9. Cookies named `grace_access` and `grace_refresh` are `Secure`, `HttpOnly`, and `SameSite=Strict`.
+10. `https://gracenyambura.com/robots.txt` returns the production crawl rules.
+11. `https://gracenyambura.com/sitemap.xml` lists public pages, published articles, and approved case studies.
+12. Direct article and client-story requests contain the correct title, description, canonical URL, Open Graph tags, and JSON-LD in the initial HTML.
+
+After launch, add the HTTPS property in Google Search Console and Bing Webmaster Tools, complete domain verification, and submit:
+
+```text
+https://gracenyambura.com/sitemap.xml
+```
+
+Inspect the homepage, Insights page, one published article, Client Stories page, and one published case study. Request indexing only after each URL returns `200`, uses the intended canonical URL, and is not blocked by `robots.txt`.
 
 ## 15. Deploy future updates
 

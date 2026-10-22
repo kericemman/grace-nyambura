@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, BookOpen, Search } from 'lucide-react';
+import { ArrowRight, BookOpen, Mail, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { Reveal } from '../../components/ui/Reveal';
 import { apiRequest } from '../../lib/api';
 
 export function InsightsPage() {
+  const { onSubscribe } = useOutletContext();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -40,15 +41,20 @@ export function InsightsPage() {
   return (
     <div className="bg-white">
       <InsightsHero />
+      <FloatingSubscribeButton onClick={onSubscribe} />
 
       <section className="border-b border-border bg-ivory py-7">
         <div className="mx-auto flex w-[min(100%-2rem,78rem)] flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex flex-wrap gap-2" aria-label="Article categories">
-            <FilterButton active={!category} onClick={() => selectCategory('')}>
+          <div
+            className="-mx-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0 lg:pb-0"
+            aria-label="Article categories"
+          >
+            <FilterButton className="shrink-0 snap-start" active={!category} onClick={() => selectCategory('')}>
               All ideas
             </FilterButton>
             {query.data?.categories?.map((item) => (
               <FilterButton
+                className="shrink-0 snap-start"
                 active={category === item}
                 key={item}
                 onClick={() => selectCategory(item)}
@@ -142,6 +148,21 @@ function InsightsHero() {
   );
 }
 
+function FloatingSubscribeButton({ onClick }) {
+  return (
+    <button
+      className="fixed bottom-5 left-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full bg-champagne p-3 text-primary shadow-[0_12px_35px_rgba(27,34,56,0.18)] transition hover:-translate-y-1 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald sm:bottom-6 sm:left-6 lg:h-auto lg:w-auto lg:gap-3 lg:px-5"
+      type="button"
+      onClick={onClick}
+      aria-label="Subscribe to the mailing list"
+      title="Subscribe to the mailing list"
+    >
+      <Mail size={19} aria-hidden="true" />
+      <span className="ml-2 hidden text-sm font-bold lg:inline">Subscribe</span>
+    </button>
+  );
+}
+
 function FeaturedArticle({ article }) {
   return (
     <Reveal as="section">
@@ -216,10 +237,10 @@ function ArticleLink({ article, className = '' }) {
   );
 }
 
-function FilterButton({ active, children, onClick }) {
+function FilterButton({ active, children, className = '', onClick }) {
   return (
     <button
-      className={`min-h-10 border px-4 text-sm font-semibold transition ${
+      className={`min-h-10 border px-4 text-sm font-semibold transition ${className} ${
         active
           ? 'border-primary bg-primary text-white'
           : 'border-border bg-white text-primary hover:border-emerald'

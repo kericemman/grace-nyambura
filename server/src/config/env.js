@@ -5,6 +5,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().positive().default(5000),
   HOST: z.string().default('127.0.0.1'),
   CLIENT_ORIGIN: z.string().url().default('http://localhost:5173'),
+  PUBLIC_SITE_URL: z.string().url().optional(),
   COOKIE_DOMAIN: z.string().optional(),
   MONGO_URI: z.string().min(1).optional(),
   JWT_ACCESS_SECRET: z.string().min(32),
@@ -21,6 +22,7 @@ const envSchema = z.object({
 
   const required = [
     'MONGO_URI',
+    'PUBLIC_SITE_URL',
     'COOKIE_DOMAIN',
     'UNSUBSCRIBE_SECRET',
     'CLOUDINARY_CLOUD_NAME',
